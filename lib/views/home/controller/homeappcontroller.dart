@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:dio/dio.dart';
+import 'package:dio/dio.dart' as dioform;
 import 'package:elegant_notification/elegant_notification.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -22,9 +23,12 @@ import 'ctintuccontroller.dart';
 
 class HomeAppController extends GetxController {
   var counthome = {}.obs;
+  RxBool isLoadding = true.obs;
+  RxBool isActive = false.obs;
   @override
   void onInit() {
     super.onInit();
+    initActive();
     initData();
     initVersion();
   }
@@ -179,6 +183,38 @@ class HomeAppController extends GetxController {
         return;
       }
       // in case of a code that is not success, you can get it here through object 'e'
+    }
+  }
+
+  void initActive() async {
+    isLoadding.value = true;
+    try {
+      var par = {
+        "organization_id": Golbal.store.user["organization_id"],
+      };
+      var strpar = json.encode(par);
+      dioform.FormData formData = dioform.FormData.fromMap(
+          {"proc": "App_ActiveTruyenthong", "pas": strpar});
+      Dio dio = Dio();
+      dio.options.headers["Authorization"] = "Bearer ${Golbal.store.token}";
+      dio.options.followRedirects = true;
+      var response = await dio
+          .post("${Golbal.congty!.api}/api/HomeApi/callProc", data: formData);
+      isLoadding.value = false;
+      var data = response.data;
+      if (data["err"] == "1") {
+        return;
+      }
+      if (data != null) {
+        var tbs = json.decode(data["data"])[0];
+        if (tbs[0] != null && tbs[0].length > 0) {
+          isActive.value = tbs[0]["isActive"];
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
     }
   }
 

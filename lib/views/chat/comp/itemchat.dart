@@ -38,17 +38,35 @@ class ItemChat extends StatelessWidget {
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.w500),
                     ),
-                    const SizedBox(height: 8),
-                    Opacity(
-                      opacity: (chat["chuaDoc"] != null && chat["chuaDoc"] > 0)
-                          ? 1
-                          : 0.64,
-                      child: Text(
-                        chat["desnoiDung"] ?? "",
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                    if (chat["nhom"] != true &&
+                        chat["status_name"] != null &&
+                        chat["status_name"] != "") ...[
+                      const SizedBox(height: 2),
+                      Opacity(
+                        opacity: 0.64,
+                        child: Text(
+                          chat["status_name"] ?? "",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontSize: 10),
+                        ),
                       ),
-                    ),
+                    ],
+                    if (chat["desnoiDung"] != null &&
+                        chat["desnoiDung"] != "") ...[
+                      const SizedBox(height: 8),
+                      Opacity(
+                        opacity:
+                            (chat["chuaDoc"] != null && chat["chuaDoc"] > 0)
+                                ? 1
+                                : 0.64,
+                        child: Text(
+                          chat["desnoiDung"] ?? "",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -62,18 +80,19 @@ class ItemChat extends StatelessWidget {
                 ),
                 if (chat["chuaDoc"] != null && chat["chuaDoc"] > 0)
                   CircleAvatar(
-                      radius: 10.0,
-                      backgroundColor: Colors.red,
-                      child: Text(
-                        "${chat["chuaDoc"]}",
-                        style: const TextStyle(
-                          fontSize: 11.0,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        textAlign: TextAlign.center,
-                        overflow: TextOverflow.ellipsis,
-                      ))
+                    radius: 10.0,
+                    backgroundColor: Colors.red,
+                    child: Text(
+                      "${chat["chuaDoc"]}",
+                      style: const TextStyle(
+                        fontSize: 11.0,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
               ],
             ),
           ],

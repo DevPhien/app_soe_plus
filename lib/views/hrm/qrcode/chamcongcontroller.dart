@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:art_sweetalert/art_sweetalert.dart';
+import 'package:dio/dio.dart';
 import 'package:dio/dio.dart' as dioform;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +36,8 @@ class ChamCongQRController extends GetxController {
   var events = {}.obs;
   var checkins = [].obs;
   var selectedEvents = [].obs;
+  RxInt soNgayDaNghi = (0).obs;
+  RxInt soNgayPhep = (0).obs;
   String face = "";
 
   bool isMonth = false;
@@ -155,10 +158,44 @@ class ChamCongQRController extends GetxController {
     if (selectedEvents.isEmpty) listTBS();
   }
 
+  void initNgayNghiPhep() async {
+    isLoadding.value = true;
+    try {
+      var par = {
+        "user_id": Golbal.store.user["user_id"],
+      };
+      var strpar = json.encode(par);
+      dioform.FormData formData =
+          dioform.FormData.fromMap({"proc": "App_NgayNghiPhep", "pas": strpar});
+      Dio dio = Dio();
+      dio.options.headers["Authorization"] = "Bearer ${Golbal.store.token}";
+      dio.options.followRedirects = true;
+      var response = await dio
+          .post("${Golbal.congty!.api}/api/HomeApi/callProc", data: formData);
+      isLoadding.value = false;
+      var data = response.data;
+      if (data["err"] == "1") {
+        return;
+      }
+      if (data != null) {
+        var tbs = json.decode(data["data"])[0];
+        if (tbs[0] != null && tbs[0].length > 0) {
+          soNgayDaNghi.value = tbs[0]["soNgayDaNghi"];
+          soNgayPhep.value = tbs[0]["soNgayPhep"];
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+  }
+
   initData() async {
     initDataDay();
     listTBS();
     listNgayle();
+    initNgayNghiPhep();
     try {
       isLoadding.value = true;
       songaycong.value = "0";

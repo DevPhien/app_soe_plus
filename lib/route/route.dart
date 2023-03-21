@@ -7,6 +7,7 @@ import '../SplashScreen.dart';
 import '../views/chat/chat.dart';
 import '../views/chat/comp/message/infochat/archives.dart';
 import '../views/chat/comp/message/infochat/infochat.dart';
+import '../views/chat/comp/message/infochat/infouser.dart';
 import '../views/chat/comp/message/message.dart';
 import '../views/chat/comp/message/sharemessage/sharemessage.dart';
 import '../views/chat/comp/sendmessage/sendmessage.dart';
@@ -126,6 +127,7 @@ class RouterGet {
     GetPage(name: '/filterlich', page: () => FilterLich()),
     GetPage(name: '/message', page: () => const Message()),
     GetPage(name: "/infochat", page: () => InfoChat()),
+    GetPage(name: "/infouser", page: () => InfoUser()),
     GetPage(name: '/sharemessage', page: () => ShareMessage()),
     GetPage(name: '/sendmessage', page: () => SendMessage()),
     GetPage(name: '/request', page: () => Request()),

@@ -2,7 +2,7 @@ class CongTy {
   int? id;
   String congtyID;
   String tenCongty = "";
-  String api = "";
+  String api = "http://10.211.55.20:6789/";
   String socket = "https://socket.soe.vn:443"; //"http://123.31.12.70:8080";
   String fileurl = "";
   String diaChi = "";
@@ -11,7 +11,8 @@ class CongTy {
       : congtyID = js['Congty_ID'],
         id = js['id'],
         tenCongty = js['tenCongty'],
-        api = js['api_link'] ?? "https://api.soe.vn",
+        api =
+            "http://10.211.55.20:6789/", // js['api_link'] ?? "https://api.soe.vn",
         socket = js['socket_link'] ?? "https://socket.soe.vn:443",
         diaChi = js['diaChi'] ?? "",
         fileurl = js['file_link'] ?? "https://sfile.soe.vn",

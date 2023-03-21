@@ -16,7 +16,9 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:sliding_sheet/sliding_sheet.dart';
 import 'package:soe/views/login/login.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -31,8 +33,10 @@ import '../comp/userswitch.dart';
 final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
 class UserController extends GetxController {
+  final sheetCtr = SheetController();
   var datas = {}.obs;
   var urlApp = Golbal.congty!.api.obs;
+  var loading = false.obs;
   int year = DateTime.now().year;
   String version = "";
   String appName = "";
@@ -58,8 +62,11 @@ class UserController extends GetxController {
   }
 
   void goInfo(context, user) {
+    // Navigator.of(context).push(MaterialPageRoute(
+    //   builder: (context) => InfoUser(user: user),
+    // ));
     Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => InfoUser(user: user),
+      builder: (context) => InfoUser(),
     ));
   }
 
@@ -668,6 +675,183 @@ class UserController extends GetxController {
       // Navigator.of(context).pushAndRemoveUntil(
       //     CupertinoPageRoute(builder: (context) => const LoginPage()),
       //     (Route<dynamic> r) => false);
+    }
+  }
+
+  Future<void> openModalStatus(context, String statusName) async {
+    var breakRow = const SizedBox(height: 10);
+    var rs = await showSlidingBottomSheet(context, builder: (context) {
+      return SlidingSheetDialog(
+        headerBuilder: (c, s) => Material(
+          color: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 20.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  margin: const EdgeInsets.only(top: 10.0),
+                  width: 40,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                    color: const Color(0xFFdddddd),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        controller: sheetCtr,
+        elevation: 8,
+        cornerRadius: 16,
+        listener: (state) {
+          if (state.isExpanded) {
+            sheetCtr.rebuild();
+          }
+        },
+        snapSpec: const SnapSpec(
+          snap: false,
+          snappings: [0.7, 0.8, 0.9],
+          positioning: SnapPositioning.relativeToAvailableSpace,
+        ),
+        builder: (context, state) {
+          return SizedBox(
+            height: MediaQuery.of(context).size.height * 0.9,
+            child: KeyboardDismisser(
+              child: Scaffold(
+                backgroundColor: Colors.white,
+                body: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                  child: Form(
+                    child: Column(
+                      children: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const <Widget>[
+                            Text(
+                              "Cập nhật trạng thái",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        breakRow,
+                        breakRow,
+                        Row(
+                          children: [
+                            Text("Nội dung", style: Golbal.stylelabel),
+                          ],
+                        ),
+                        breakRow,
+                        TextFormField(
+                          initialValue: statusName,
+                          minLines: 2,
+                          maxLines: 4,
+                          maxLength: 500,
+                          decoration: Golbal.decoration,
+                          style: Golbal.styleinput,
+                          onChanged: (String txt) => statusName = txt,
+                        ),
+                        breakRow,
+                        Container(
+                          padding: const EdgeInsets.symmetric(vertical: 10.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Expanded(
+                                child: ElevatedButton(
+                                  style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                      const Color(0xFFF2F2F2),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.of(context).pop(false);
+                                  },
+                                  child: const Text(
+                                    "Hủy",
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 10.0),
+                              Expanded(
+                                child: ElevatedButton(
+                                  style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                      Golbal.appColor,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.of(context).pop(true);
+                                  },
+                                  child: const Text(
+                                    "Lưu",
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    });
+
+    if (rs == true) {
+      saveStatus(statusName);
+    }
+  }
+
+  void saveStatus(statusName) async {
+    try {
+      if (loading.value) return;
+      loading.value = true;
+      EasyLoading.show(status: "loading...");
+
+      var body = {
+        "status_name": statusName,
+      };
+      Dio dio = Dio();
+      dio.options.headers["Authorization"] = "Bearer ${Golbal.store.token}";
+      dio.options.followRedirects = true;
+      var response = await dio
+          .put("${Golbal.congty!.api}/api/User/Update_Status", data: body);
+      var data = response.data;
+      loading.value = false;
+      if (data["err"] == "1") {
+        EasyLoading.showError("Có lỗi xảy ra, vui lòng thử lại!");
+        return;
+      }
+      initData();
+      EasyLoading.dismiss();
+    } catch (e) {
+      loading.value = false;
+      EasyLoading.showError("Có lỗi xảy ra!");
+      if (kDebugMode) {
+        print(e);
+      }
     }
   }
 

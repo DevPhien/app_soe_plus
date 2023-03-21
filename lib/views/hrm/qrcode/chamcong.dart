@@ -434,27 +434,29 @@ class ChamCongQRPage extends StatelessWidget {
                     thuWidget(),
                     ngayWidget(),
                     const SizedBox(height: 15),
-                    Row(children: [
-                      Icon(FontAwesome.calendar_check_o,
-                          color: Golbal.titleColor, size: 16),
-                      const SizedBox(width: 10),
-                      Text("Ngày công cá nhân",
-                          style: TextStyle(
-                              color: Golbal.titleColor,
-                              fontWeight: FontWeight.bold)),
-                      const Spacer(),
-                      CircleAvatar(
-                          backgroundColor: Golbal.appColor,
-                          child: Obx(() => Text(
-                              (controller.songaycong).toString(),
-                              style: const TextStyle(color: Colors.white)))),
-                      const SizedBox(width: 10),
-                      CircleAvatar(
-                          backgroundColor: Colors.orange,
-                          child: Obx(() => Text(
-                              controller.songaycongthang.toString(),
-                              style: const TextStyle(color: Colors.white))))
-                    ]),
+                    Row(
+                      children: [
+                        Icon(FontAwesome.calendar_check_o,
+                            color: Golbal.titleColor, size: 16),
+                        const SizedBox(width: 10),
+                        Text("Ngày công cá nhân",
+                            style: TextStyle(
+                                color: Golbal.titleColor,
+                                fontWeight: FontWeight.bold)),
+                        const Spacer(),
+                        CircleAvatar(
+                            backgroundColor: Golbal.appColor,
+                            child: Obx(() => Text(
+                                (controller.songaycong).toString(),
+                                style: const TextStyle(color: Colors.white)))),
+                        const SizedBox(width: 10),
+                        CircleAvatar(
+                            backgroundColor: Colors.orange,
+                            child: Obx(() => Text(
+                                controller.songaycongthang.toString(),
+                                style: const TextStyle(color: Colors.white))))
+                      ],
+                    ),
                     const SizedBox(height: 20),
                     SafeArea(
                       child: Wrap(
@@ -506,6 +508,42 @@ class ChamCongQRPage extends StatelessWidget {
                                   fontStyle: FontStyle.italic, fontSize: 13)),
                         ],
                       ),
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: <Widget>[
+                        Icon(FontAwesome.calendar_check_o,
+                            color: Golbal.titleColor, size: 16),
+                        const SizedBox(width: 10),
+                        Text("Tổng ngày phép trong năm",
+                            style: TextStyle(
+                                color: Golbal.titleColor,
+                                fontWeight: FontWeight.bold)),
+                        const Spacer(),
+                        CircleAvatar(
+                            backgroundColor: Colors.orange,
+                            child: Obx(() => Text(
+                                controller.soNgayPhep.toString(),
+                                style: const TextStyle(color: Colors.white)))),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: <Widget>[
+                        Icon(FontAwesome.calendar_check_o,
+                            color: Golbal.titleColor, size: 16),
+                        const SizedBox(width: 10),
+                        Text("Số ngày đã nghỉ phép",
+                            style: TextStyle(
+                                color: Golbal.titleColor,
+                                fontWeight: FontWeight.bold)),
+                        const Spacer(),
+                        CircleAvatar(
+                            backgroundColor: Golbal.appColor,
+                            child: Obx(() => Text(
+                                (controller.soNgayDaNghi).toString(),
+                                style: const TextStyle(color: Colors.white)))),
+                      ],
                     ),
                     const SizedBox(height: 20),
                     Row(

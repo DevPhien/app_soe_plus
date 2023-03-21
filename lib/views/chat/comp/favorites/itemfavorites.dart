@@ -48,7 +48,8 @@ class ItemFavorites extends StatelessWidget {
       ),
       child: InkWell(
         onTap: () {
-          chatController.goChat(user, true);
+          //chatController.goChat(user, true);
+          controller.goInfoUser(user);
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),

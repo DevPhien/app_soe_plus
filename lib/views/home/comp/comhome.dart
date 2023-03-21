@@ -15,15 +15,21 @@ class CompHome extends StatelessWidget {
   @override
   Widget build(context) {
     return RefreshIndicator(
-        onRefresh: homecontroller.onrefersh,
-        child: ListView(
+      onRefresh: homecontroller.onrefersh,
+      child: Obx(
+        () => ListView(
           children: [
             HomeThongBao(),
             HomeMenu(),
             HomeMyMenu(),
             HomeSinhNhat(),
-            HomeTintuc(),
+            if (!homecontroller.isLoadding.value &&
+                homecontroller.isActive.value) ...[
+              HomeTintuc(),
+            ],
           ],
-        ));
+        ),
+      ),
+    );
   }
 }

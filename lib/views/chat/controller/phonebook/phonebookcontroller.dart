@@ -45,10 +45,10 @@ class PhoneBookController extends GetxController {
     EasyLoading.showToast("Công ty của bạn chưa đăng ký sử dụng dịch vụ này!");
   }
 
-  void goInfoChat(user) async {
-    Get.toNamed("infochat", arguments: {
-      "NhanSu_ID": user["NhanSu_ID"] ?? "",
-    });
+  Future<void> goInfoUser(user) async {
+    var result = Get.toNamed("infouser", arguments: user);
+    if (result != null) {}
+    return;
   }
 
   @override

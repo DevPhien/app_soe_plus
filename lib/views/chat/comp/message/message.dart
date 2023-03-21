@@ -341,25 +341,37 @@ class _MessageState extends State<Message>
                                             ),
                                           ),
                                           if (messageController
+                                                  .chat["status_name"] !=
+                                              null) ...[
+                                            Text(
+                                              messageController
+                                                  .chat["status_name"],
+                                              style: const TextStyle(
+                                                color: Colors.black45,
+                                                fontSize: 12.0,
+                                              ),
+                                            ),
+                                          ] else if (messageController
                                                   .chat['isOnline'] ??
-                                              false)
+                                              false) ...[
                                             const Text(
                                               "Trực tuyến",
                                               style: TextStyle(
                                                 color: Colors.black45,
                                                 fontSize: 12.0,
                                               ),
-                                            )
-                                          else if (messageController
+                                            ),
+                                          ] else if (messageController
                                                   .chat['lastOnline'] !=
-                                              null)
+                                              null) ...[
                                             Text(
                                               "${messageController.chat["lastOnline"] ?? ""}",
                                               style: const TextStyle(
                                                 color: Colors.black45,
                                                 fontSize: 12.0,
                                               ),
-                                            )
+                                            ),
+                                          ],
                                         ],
                                       )),
                                 )

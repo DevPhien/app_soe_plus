@@ -17,7 +17,7 @@ class ItemPhoneBook extends StatelessWidget {
     return InkWell(
       onTap: () {
         //chatController.goChat(user, true);
-        phonbookController.goInfoChat(user);
+        phonbookController.goInfoUser(user);
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),

@@ -103,6 +103,12 @@ class FavoritesController extends GetxController {
     }
   }
 
+  Future<void> goInfoUser(user) async {
+    var result = Get.toNamed("infouser", arguments: user);
+    if (result != null) {}
+    return;
+  }
+
   @override
   void onInit() {
     super.onInit();

@@ -9,7 +9,9 @@ import '../../../utils/golbal/golbal.dart';
 
 class UserVBController extends GetxController {
   var users = [].obs;
+  var tempusers = [].obs;
   var groupusers = [].obs;
+  var tempgroupusers = [].obs;
   var dtusers = [];
   var dtgroupusers = [];
   bool isSearch = false;
@@ -34,6 +36,7 @@ class UserVBController extends GetxController {
           }
           dtusers = tbs;
           users.value = tbs;
+          tempusers.value = tbs;
           isloadding.value = false;
         }
       }
@@ -61,6 +64,7 @@ class UserVBController extends GetxController {
           }
           dtgroupusers = tbs;
           groupusers.value = tbs;
+          tempgroupusers.value = tbs;
           isloaddingGroup.value = false;
         }
       }
@@ -78,8 +82,16 @@ class UserVBController extends GetxController {
       users[idx]["chon"] = vl;
       users.refresh();
     }
+    var idx2 =
+        users.indexWhere((element) => element["NhanSu_ID"] == u["NhanSu_ID"]);
+    if (idx2 != -1) {
+      tempusers[idx2]["chon"] = vl;
+      tempusers.refresh();
+    }
     if (one) {
       users.refresh();
+      groupusers.refresh();
+      //tempusers.refresh();
       Get.back(result: [u]);
     } else {
       onChonUser(false);
@@ -93,8 +105,16 @@ class UserVBController extends GetxController {
       groupusers[idx]["chon"] = vl;
       groupusers.refresh();
     }
+    var idx2 = tempgroupusers
+        .indexWhere((element) => element["NhanSu_ID"] == u["NhanSu_ID"]);
+    if (idx2 != -1) {
+      tempgroupusers[idx2]["chon"] = vl;
+      tempgroupusers.refresh();
+    }
     if (one) {
       users.refresh();
+      groupusers.refresh();
+      //tempusers.refresh();
       Get.back(result: [u]);
     } else {
       onChonUser(false);
@@ -113,6 +133,24 @@ class UserVBController extends GetxController {
       }
     });
     groupusers.where((p0) => p0["chon"] == true).forEach((element) {
+      if (f == true) {
+        element["chon"] = false;
+      }
+      if (chons.indexWhere((u) => u["NhanSu_ID"] == element["NhanSu_ID"]) ==
+          -1) {
+        chons.add(element);
+      }
+    });
+    tempusers.where((p0) => p0["chon"] == true).forEach((element) {
+      if (f == true) {
+        element["chon"] = false;
+      }
+      if (chons.indexWhere((u) => u["NhanSu_ID"] == element["NhanSu_ID"]) ==
+          -1) {
+        chons.add(element);
+      }
+    });
+    tempgroupusers.where((p0) => p0["chon"] == true).forEach((element) {
       if (f == true) {
         element["chon"] = false;
       }
