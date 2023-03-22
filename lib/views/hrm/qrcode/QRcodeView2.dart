@@ -11,7 +11,7 @@ import 'package:soe/utils/golbal/golbal.dart';
 import 'package:dio/dio.dart' as dioform;
 import 'package:flutter_face_api/face_api.dart' as regula;
 import 'package:uuid/uuid.dart';
-import 'package:wifi_info_flutter/wifi_info_flutter.dart';
+import 'package:network_info_plus/network_info_plus.dart';
 
 import '../../../flutter_flow/flutter_flow_util.dart';
 
@@ -40,12 +40,32 @@ class _QRViewExampleState extends State<QRCodeView2> {
   int isType = 1;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   String dName = "";
+  String face = "";
   File? _image;
   final picker = ImagePicker();
   @override
   void initState() {
     super.initState();
+    initFace();
     bindListQrcode();
+  }
+
+  Future<void> initFace() async {
+    var par = {
+      "NhanSu_ID": Golbal.store.user["user_id"],
+    };
+    var strpar = json.encode(par);
+    dioform.FormData formData =
+        dioform.FormData.fromMap({"proc": "App_GetNhansuFace", "pas": strpar});
+    dioform.Dio dio = dioform.Dio();
+    dio.options.headers["Authorization"] = "Bearer ${Golbal.store.token}";
+    dio.options.followRedirects = true;
+    var res = await dio.post("${Golbal.congty!.api}/api/HomeApi/callProc",
+        data: formData);
+    if (res.data != null && res.data["error"] != 1) {
+      var dts = List.castFrom(json.decode(res.data["data"])[0]);
+      if (dts.isNotEmpty) face = dts[0]["Face"] ?? "";
+    }
   }
 
   bindListQrcode() async {
@@ -145,7 +165,7 @@ class _QRViewExampleState extends State<QRCodeView2> {
       regula.MatchFacesImage im2 = regula.MatchFacesImage();
       im1.imageType = regula.ImageType.PRINTED;
       im2.imageType = regula.ImageType.PRINTED;
-      im1.bitmap = widget.face;
+      im1.bitmap = face;
       im2.bitmap = base64Encode(_image!.readAsBytesSync());
       var request = regula.MatchFacesRequest();
       request.images = [im1, im2];
@@ -171,9 +191,13 @@ class _QRViewExampleState extends State<QRCodeView2> {
       return;
     }
     var tyle = await compareFace();
+    String lydo = "";
+    int isDuyet = 1;
     if (tyle < 90) {
-      EasyLoading.showError("Khôn mặt đăng ký không đúng với tài khoản này!.");
-      return;
+      EasyLoading.showError("Khuôn mặt đăng ký không đúng với tài khoản này!.");
+      lydo = "Khuôn mặt đăng ký không đúng với tài khoản này!.";
+      isDuyet = -1;
+      //return;
     }
     EasyLoading.show(status: "Đang check ${inout ? " in" : " out"}...");
     Location location = Location();
@@ -206,7 +230,7 @@ class _QRViewExampleState extends State<QRCodeView2> {
     String? wifiIP = "";
     String? wifiName = "MacOS";
     if (Platform.isAndroid || Platform.isIOS) {
-      final WifiInfo wifiInfo = WifiInfo();
+      final NetworkInfo wifiInfo = NetworkInfo();
       wifiName = (await wifiInfo.getWifiName());
       wifiIP = (await wifiInfo.getWifiIP());
     }
@@ -216,7 +240,7 @@ class _QRViewExampleState extends State<QRCodeView2> {
       "Congty_ID": Golbal.store.user["organization_id"],
       "NhanSu_ID": Golbal.store.user["user_id"],
       "GioCheckin ": DateTime.now().toIso8601String(),
-      "FullName": Golbal.store.user["fullName"],
+      "FullName": Golbal.store.user["FullName"],
       "FromIP": wifiIP,
       "FromDivice": Golbal.store.device["deviceName"],
       "Latlong": locationData == null
@@ -227,9 +251,9 @@ class _QRViewExampleState extends State<QRCodeView2> {
       "FaceImage": finame,
       "IsType": isType.toString(),
       "IsAuto": "True",
-      "Lydo": "",
+      "Lydo": lydo,
       "IsWork": 1,
-      "IsDuyet": 1,
+      "IsDuyet": isDuyet,
       "Nguoiduyet": Golbal.store.user["user_id"],
       "Ngayduyet": DateTime.now().toIso8601String(),
       "Ngaycong": DateTime.now().toIso8601String(),
@@ -300,29 +324,31 @@ class _QRViewExampleState extends State<QRCodeView2> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Expanded(
-                              child: ElevatedButton(
-                                  onPressed: () {
-                                    checkIn(true);
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: Golbal.appColor),
-                                  child: const Text(
-                                    "Checkin",
-                                    style: TextStyle(color: Colors.white),
-                                  ))),
-                          const SizedBox(width: 20.0),
-                          Expanded(
-                              child: ElevatedButton(
-                                  onPressed: () {
-                                    checkIn(false);
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.red),
-                                  child: const Text(
-                                    "Checkout",
-                                    style: TextStyle(color: Colors.white),
-                                  ))),
+                          if (widget.isInout)
+                            Expanded(
+                                child: ElevatedButton(
+                                    onPressed: () {
+                                      checkIn(true);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: Golbal.appColor),
+                                    child: const Text(
+                                      "Checkin",
+                                      style: TextStyle(color: Colors.white),
+                                    ))),
+                          //const SizedBox(width: 20.0),
+                          if (!widget.isInout)
+                            Expanded(
+                                child: ElevatedButton(
+                                    onPressed: () {
+                                      checkIn(false);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.red),
+                                    child: const Text(
+                                      "Checkout",
+                                      style: TextStyle(color: Colors.white),
+                                    ))),
                         ],
                       ),
                     )

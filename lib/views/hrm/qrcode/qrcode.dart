@@ -11,7 +11,7 @@ import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:dio/dio.dart' as dioform;
 import 'package:flutter_face_api/face_api.dart' as regula;
 import 'package:uuid/uuid.dart';
-import 'package:wifi_info_flutter/wifi_info_flutter.dart';
+import 'package:network_info_plus/network_info_plus.dart';
 import '../../../flutter_flow/flutter_flow_util.dart';
 import '../../../utils/golbal/golbal.dart';
 import 'QRcodeView2.dart';
@@ -45,11 +45,31 @@ class _QRViewExampleState extends State<QRCode> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   String dName = "";
   File? _image;
+  String face = "";
   final picker = ImagePicker();
   @override
   void initState() {
     super.initState();
+    initFace();
     bindListQrcode();
+  }
+
+  Future<void> initFace() async {
+    var par = {
+      "NhanSu_ID": Golbal.store.user["user_id"],
+    };
+    var strpar = json.encode(par);
+    dioform.FormData formData =
+        dioform.FormData.fromMap({"proc": "App_GetNhansuFace", "pas": strpar});
+    dioform.Dio dio = dioform.Dio();
+    dio.options.headers["Authorization"] = "Bearer ${Golbal.store.token}";
+    dio.options.followRedirects = true;
+    var res = await dio.post("${Golbal.congty!.api}/api/HomeApi/callProc",
+        data: formData);
+    if (res.data != null && res.data["error"] != 1) {
+      var dts = List.castFrom(json.decode(res.data["data"])[0]);
+      if (dts.isNotEmpty) face = dts[0]["Face"] ?? "";
+    }
   }
 
   bindListQrcode() async {
@@ -143,12 +163,13 @@ class _QRViewExampleState extends State<QRCode> {
 
   Future<double> compareFace() async {
     try {
+      print("face=${face.length}");
       EasyLoading.show(status: "Đang check xác minh khuôn mặt...");
       regula.MatchFacesImage im1 = regula.MatchFacesImage();
       regula.MatchFacesImage im2 = regula.MatchFacesImage();
       im1.imageType = regula.ImageType.PRINTED;
       im2.imageType = regula.ImageType.PRINTED;
-      im1.bitmap = widget.face;
+      im1.bitmap = face;
       im2.bitmap = base64Encode(_image!.readAsBytesSync());
       var request = regula.MatchFacesRequest();
       request.images = [im1, im2];
@@ -174,9 +195,13 @@ class _QRViewExampleState extends State<QRCode> {
       return;
     }
     var tyle = await compareFace();
+    String lydo = "";
+    int isDuyet = 1;
     if (tyle < 90) {
-      EasyLoading.showError("Khôn mặt đăng ký không đúng với tài khoản này!.");
-      return;
+      EasyLoading.showError("Khuôn mặt đăng ký không đúng với tài khoản này!.");
+      lydo = "Khuôn mặt đăng ký không đúng với tài khoản này ($tyle%)!.";
+      isDuyet = -1;
+      //return;
     }
     EasyLoading.showToast(tyle.toString());
     //So sánh khuôn mặt
@@ -213,7 +238,7 @@ class _QRViewExampleState extends State<QRCode> {
     String? wifiIP = "";
     String? wifiName = "MacOS";
     if (Platform.isAndroid || Platform.isIOS) {
-      final WifiInfo wifiInfo = WifiInfo();
+      final NetworkInfo wifiInfo = NetworkInfo();
       wifiName = (await wifiInfo.getWifiName());
       wifiIP = (await wifiInfo.getWifiIP());
     }
@@ -223,7 +248,7 @@ class _QRViewExampleState extends State<QRCode> {
       "Congty_ID": Golbal.store.user["organization_id"],
       "NhanSu_ID": Golbal.store.user["user_id"],
       "GioCheckin ": DateTime.now().toIso8601String(),
-      "FullName": Golbal.store.user["fullName"],
+      "FullName": Golbal.store.user["FullName"],
       "FromIP": wifiIP,
       "FromDivice": Golbal.store.device["deviceName"],
       "Latlong": locationData == null
@@ -234,9 +259,9 @@ class _QRViewExampleState extends State<QRCode> {
       "FaceImage": finame,
       "IsType": isType.toString(),
       "IsAuto": "True",
-      "Lydo": "",
+      "Lydo": lydo,
       "IsWork": 1,
-      "IsDuyet": 1,
+      "IsDuyet": isDuyet,
       "Nguoiduyet": Golbal.store.user["user_id"],
       "Ngayduyet": DateTime.now().toIso8601String(),
       "Ngaycong": DateTime.now().toIso8601String(),
@@ -325,29 +350,30 @@ class _QRViewExampleState extends State<QRCode> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Expanded(
-                              child: ElevatedButton(
-                                  onPressed: () {
-                                    checkIn(true);
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: Golbal.appColor),
-                                  child: const Text(
-                                    "Checkin",
-                                    style: TextStyle(color: Colors.white),
-                                  ))),
-                          const SizedBox(width: 20.0),
-                          Expanded(
-                              child: ElevatedButton(
-                                  onPressed: () {
-                                    checkIn(false);
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.red),
-                                  child: const Text(
-                                    "Checkout",
-                                    style: TextStyle(color: Colors.white),
-                                  ))),
+                          if (widget.isInout)
+                            Expanded(
+                                child: ElevatedButton(
+                                    onPressed: () {
+                                      checkIn(true);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: Golbal.appColor),
+                                    child: const Text(
+                                      "Checkin",
+                                      style: TextStyle(color: Colors.white),
+                                    ))),
+                          if (!widget.isInout)
+                            Expanded(
+                                child: ElevatedButton(
+                                    onPressed: () {
+                                      checkIn(false);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.red),
+                                    child: const Text(
+                                      "Checkout",
+                                      style: TextStyle(color: Colors.white),
+                                    ))),
                         ],
                       ),
                     )
@@ -454,25 +480,22 @@ class _QRViewExampleState extends State<QRCode> {
           Navigator.pop(context);
           controller.dispose();
           await Future.delayed(const Duration(seconds: 1));
-          // final ImagePicker picker = ImagePicker();
-          // final pickedFile = await picker.pickImage(
-          //     source: ImageSource.camera,
-          //     maxHeight: 1280,
-          //     maxWidth: 720,
-          //     imageQuality: 90,
-          //     preferredCameraDevice: CameraDevice.front); //
-          // _image = File(pickedFile!.path);
-          regula.FaceSDK.presentFaceCaptureActivity().then((result) async {
-            var img = base64Decode(
-                regula.FaceCaptureResponse.fromJson(json.decode(result))!
-                    .image!
-                    .bitmap!
-                    .replaceAll("\n", ""));
-            final tempDir = await getTemporaryDirectory();
-            var uuid = const Uuid();
-            _image =
-                await File('${tempDir.path}/face${uuid.v4()}.png').create();
-            _image!.writeAsBytesSync(img);
+          await regula.FaceSDK.presentFaceCaptureActivity()
+              .then((result) async {
+            try {
+              var img = base64Decode(
+                  regula.FaceCaptureResponse.fromJson(json.decode(result))!
+                      .image!
+                      .bitmap!
+                      .replaceAll("\n", ""));
+              final tempDir = await getTemporaryDirectory();
+              var uuid = const Uuid();
+              _image =
+                  await File('${tempDir.path}/face${uuid.v4()}.png').create();
+              _image!.writeAsBytesSync(img);
+            } catch (e) {
+              Navigator.pop(context);
+            }
             setState(() {
               qrText = scanData;
             });

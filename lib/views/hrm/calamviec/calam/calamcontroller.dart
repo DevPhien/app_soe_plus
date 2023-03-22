@@ -53,7 +53,7 @@ class CalamController extends GetxController {
       "mauchu": model["mauchu"],
       "trangthai": model["trangthai"]
     };
-    String proc = "App_Calamviec_Update";
+    String proc = "App_Calamviec_Add";
     if (model["caid"] != null) {
       objpar = {
         "caid": model["caid"],

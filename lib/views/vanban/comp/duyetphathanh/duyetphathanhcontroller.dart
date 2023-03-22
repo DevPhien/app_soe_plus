@@ -246,6 +246,17 @@ class DuyetPhathanhVanbanController extends GetxController {
       if (response.data["err"] == "1") {
         EasyLoading.showToast(response.data["err_app"] ??
             "Không thể duyệt phát hành văn bản này, vui lòng thử lại!");
+        http.put('${Golbal.congty!.api}/api/Log/AddLog', data: {
+          "title": "Lỗi duyệt PH văn bản",
+          "controller": "Doc/PublishingApproval",
+          "log_date": DateTime.now().toIso8601String(),
+          "log_content": response.data["err_app"] + "|" + mdata["model"],
+          "full_name": Golbal.store.user["FullName"],
+          "user_id": Golbal.store.user["user_id"],
+          "token_id": Golbal.store.user["Token_ID"],
+          "is_type": 0,
+          "module": "Doc",
+        });
       } else {
         if (response.data != null) {
           EasyLoading.showToast("Duyệt phát hành văn bản thành công!");
@@ -255,7 +266,7 @@ class DuyetPhathanhVanbanController extends GetxController {
     } catch (e) {
       http.put('${Golbal.congty!.api}/api/Log/AddLog', data: {
         "title": "Lỗi duyệt phát hành văn bản",
-        "controller": "Doc/SubmittedForApproval",
+        "controller": "Doc/PublishingApproval",
         "log_date": DateTime.now().toIso8601String(),
         "log_content": mdata["model"],
         "full_name": Golbal.store.user["FullName"],

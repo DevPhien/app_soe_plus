@@ -16,6 +16,7 @@ class Checkin extends StatelessWidget {
     TextStyle lb = const TextStyle(color: Colors.black54);
     TextStyle ib =
         const TextStyle(color: Colors.black87, fontWeight: FontWeight.w600);
+    print(controller.checkin);
     return MediaQuery(
       data: MediaQuery.of(context)
           .copyWith(textScaleFactor: Golbal.textScaleFactor),
@@ -33,6 +34,8 @@ class Checkin extends StatelessWidget {
           systemOverlayStyle: Golbal.systemUiOverlayStyle1,
           actions: [
             controller.checkin["IsCheckin"] == true &&
+                    controller.checkin["NhanSu_ID"] ==
+                        Golbal.store.user["user_id"] &&
                     controller.checkin["countCheck"] == 0 &&
                     controller.checkin["IsTimein"] == true &&
                     controller.checkin['IsInOut'] == true
@@ -142,7 +145,9 @@ class Checkin extends StatelessWidget {
                                       style: lb,
                                     )),
                                 const SizedBox(width: 5),
-                                Text(controller.checkin["Lydo"], style: ib)
+                                Expanded(
+                                    child: Text(controller.checkin["Lydo"],
+                                        style: ib))
                               ],
                             ),
                             const SizedBox(height: 20),

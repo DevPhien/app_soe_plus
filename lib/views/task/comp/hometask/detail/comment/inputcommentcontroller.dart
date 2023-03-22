@@ -87,6 +87,24 @@ class InputCommentController extends GetxController {
   }
 
   Future<void> sendMessage() async {
+    if (textcontroller.text == "") {
+      EasyLoading.showError("Vui lòng nhập nội dung bình luận!");
+      return;
+    }
+    EasyLoading.show(
+      status: "Đang gửi tin nhắn ...",
+    );
+    Map<String, dynamic> mdata = {
+      "models": json.encode({
+        "user_id": Golbal.store.user["user_id"],
+        "congviec_id": cmcontroller.controller.task["CongviecID"],
+        "ids": "",
+        "comment": {
+          "Noidung": textcontroller.text,
+          "CongviecID": cmcontroller.controller.task["CongviecID"]
+        },
+      })
+    };
     var ffiles = [];
     for (var fi in files.value) {
       if (kIsWeb) {
@@ -106,24 +124,6 @@ class InputCommentController extends GetxController {
             filename: fi.path!.split('/').last));
       }
     }
-    if (textcontroller.text == "" && ffiles.isEmpty) {
-      EasyLoading.showError("Vui lòng nhập nội dung bình luận!");
-      return;
-    }
-    EasyLoading.show(
-      status: "Đang gửi tin nhắn ...",
-    );
-    Map<String, dynamic> mdata = {
-      "models": json.encode({
-        "user_id": Golbal.store.user["user_id"],
-        "congviec_id": cmcontroller.controller.task["CongviecID"],
-        "ids": "",
-        "comment": {
-          "Noidung": textcontroller.text,
-          "CongviecID": cmcontroller.controller.task["CongviecID"]
-        },
-      })
-    };
     if (ffiles.isNotEmpty) {
       mdata["files"] = ffiles;
     }
@@ -144,9 +144,7 @@ class InputCommentController extends GetxController {
       } else {
         EasyLoading.showToast("Gửi bình luận thành công!");
         files.value.clear();
-        images.value.clear();
         files.refresh();
-        images.refresh();
         cmcontroller.initData(cmcontroller.controller.task["CongviecID"], true);
         //Socket
         Golbal.sendSocketData({

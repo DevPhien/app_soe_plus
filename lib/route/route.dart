@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:soe/views/hrm/calamviec/dangky/dangkylich.dart';
 import 'package:soe/views/lichhop/lichop.dart';
 import 'package:soe/views/truyenthong/tintuc/chitiettintuc.dart';
 import 'package:soe/views/vanban/comp/xulyvanban/chuyendichdanh.dart';
@@ -7,7 +8,6 @@ import '../SplashScreen.dart';
 import '../views/chat/chat.dart';
 import '../views/chat/comp/message/infochat/archives.dart';
 import '../views/chat/comp/message/infochat/infochat.dart';
-import '../views/chat/comp/message/infochat/infouser.dart';
 import '../views/chat/comp/message/message.dart';
 import '../views/chat/comp/message/sharemessage/sharemessage.dart';
 import '../views/chat/comp/sendmessage/sendmessage.dart';
@@ -76,6 +76,7 @@ import '../views/vanban/comp/tientrinhxyly.dart';
 import '../views/vanban/comp/tralai/tralai.dart';
 import '../views/vanban/comp/xacnhanhoanthanh/xacnhanhoanthanh.dart';
 import '../views/vanban/vanban.dart';
+import '../views/chat/comp/message/infochat/infouser.dart';
 
 class RouterGet {
   static var route = [
@@ -120,6 +121,7 @@ class RouterGet {
     GetPage(
         name: '/thuhoi', page: () => ThuhoiVanBan(), fullscreenDialog: true),
     //Phiên
+    GetPage(name: "/infouser", page: () => InfoUser()),
     GetPage(name: '/user', page: () => User()),
     GetPage(name: '/chat', page: () => const Chat()),
     GetPage(name: '/archives', page: () => Archives()),
@@ -127,7 +129,6 @@ class RouterGet {
     GetPage(name: '/filterlich', page: () => FilterLich()),
     GetPage(name: '/message', page: () => const Message()),
     GetPage(name: "/infochat", page: () => InfoChat()),
-    GetPage(name: "/infouser", page: () => InfoUser()),
     GetPage(name: '/sharemessage', page: () => ShareMessage()),
     GetPage(name: '/sendmessage', page: () => SendMessage()),
     GetPage(name: '/request', page: () => Request()),
@@ -162,6 +163,7 @@ class RouterGet {
     GetPage(name: '/chamcongQR', page: () => ChamCongQRPage()),
     GetPage(name: '/checkin', page: () => Checkin()),
     GetPage(name: '/hrm', page: () => HRMPage()),
+    GetPage(name: '/dkcalamviec', page: () => DangkylichPage()),
     GetPage(name: '/calam', page: () => CalamPage()),
     GetPage(name: '/diadiemlam', page: () => DiadiemlamPage()),
     //Điều xe

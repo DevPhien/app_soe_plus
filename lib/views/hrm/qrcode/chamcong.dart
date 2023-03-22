@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:get/get.dart';
+import 'package:soe/flutter_flow/flutter_flow_util.dart';
 import 'package:soe/utils/golbal/golbal.dart';
 import 'package:soe/views/component/use/inlineloadding.dart';
 import 'chamcongcontroller.dart';
@@ -122,6 +123,44 @@ class ChamCongQRPage extends StatelessWidget {
       },
       itemCount: controller.selectedEvents.length,
     );
+  }
+
+  Widget _buildEventNull() {
+    String date = DateFormat("yyyy-MM-dd").format(controller.date);
+    String now = DateFormat("yyyy-MM-dd").format(DateTime.now());
+    bool today = (date == now);
+    bool future = (controller.date > DateTime.now());
+
+    if (today) {
+      return InkWell(
+        onTap: () => {Get.toNamed("dkcalamviec")},
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const <Widget>[
+            Text("Vui lòng click đăng ký lịch làm việc."),
+          ],
+        ),
+      );
+    } else {
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          if (future) ...[
+            const Text("Vẫn chưa đến ngày check in."),
+          ] else ...[
+            const Text("Không có dữ liệu check in."),
+          ],
+          const SizedBox(width: 5.0),
+          const Icon(
+            Fontisto.smiley,
+            color: Colors.orange,
+            size: 18.0,
+          ),
+        ],
+      );
+    }
   }
 
   //Function
@@ -457,9 +496,11 @@ class ChamCongQRPage extends StatelessWidget {
                                 style: const TextStyle(color: Colors.white))))
                       ],
                     ),
-                    const SizedBox(height: 20),
-                    SafeArea(
-                      child: Wrap(
+                    const SizedBox(height: 15),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
                               color: const Color(0xFF5CB85C),
@@ -509,7 +550,7 @@ class ChamCongQRPage extends StatelessWidget {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 15),
                     Row(
                       children: <Widget>[
                         Icon(FontAwesome.calendar_check_o,
@@ -527,7 +568,7 @@ class ChamCongQRPage extends StatelessWidget {
                                 style: const TextStyle(color: Colors.white)))),
                       ],
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 15),
                     Row(
                       children: <Widget>[
                         Icon(FontAwesome.calendar_check_o,
@@ -545,7 +586,7 @@ class ChamCongQRPage extends StatelessWidget {
                                 style: const TextStyle(color: Colors.white)))),
                       ],
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 15),
                     Row(
                       children: [
                         Icon(FontAwesome.calendar,
@@ -560,10 +601,10 @@ class ChamCongQRPage extends StatelessWidget {
                                 ))),
                       ],
                     ),
-                    const SizedBox(height: 15),
+                    const SizedBox(height: 20),
                     controller.selectedEvents.isNotEmpty
                         ? _buildEventList()
-                        : Container(width: 0.0),
+                        : _buildEventNull(),
                   ],
                 ),
               ),

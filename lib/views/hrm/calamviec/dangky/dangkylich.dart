@@ -74,14 +74,19 @@ class DangkylichPage extends StatelessWidget {
                                     fontWeight: FontWeight.w600),
                               ),
                               if (e["tenca"] != null)
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 4),
-                                  child: Text(e["tenca"],
-                                      style: TextStyle(
-                                          color: e["mauchu"] != null
-                                              ? HexColor(e["mauchu"])
-                                              : Colors.black87,
-                                          fontSize: 11)),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 4, left: 1, right: 1),
+                                    child: Text(e["tenca"],
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            color: e["mauchu"] != null
+                                                ? HexColor(e["mauchu"])
+                                                : Colors.black87,
+                                            fontSize: 11)),
+                                  ),
                                 ),
                               const SizedBox(height: 4),
                             ],
@@ -243,6 +248,8 @@ class DangkylichPage extends StatelessWidget {
   }
 
   void showAction() {
+    controller.openca();
+    var item = controller.thongtinca;
     Get.bottomSheet((BottomSheet(
         onClosing: () {},
         builder: (_) => Container(
@@ -280,20 +287,80 @@ class DangkylichPage extends StatelessWidget {
                           leading: const Icon(FontAwesome.trash_o),
                           title: const Text("Xoá ca làm việc"),
                         ),
-                        ListTile(
-                          onTap: () {
-                            Get.back();
-                          },
-                          leading: const Icon(FontAwesome.pencil_square_o),
-                          title: const Text("Xin nghỉ"),
-                        ),
-                        ListTile(
-                          onTap: () {
-                            Get.back();
-                          },
-                          leading: const Icon(FontAwesome.qrcode),
-                          title: const Text("Xin check in"),
-                        ),
+                        // ListTile(
+                        //   onTap: () {
+                        //     Get.back();
+                        //   },
+                        //   leading: const Icon(FontAwesome.pencil_square_o),
+                        //   title: const Text("Xin nghỉ"),
+                        // ),
+                        // ListTile(
+                        //   onTap: () {
+                        //     Get.back();
+                        //   },
+                        //   leading: const Icon(FontAwesome.qrcode),
+                        //   title: const Text("Xin check in"),
+                        // ),
+                        if (item["tenca"] != null) const Divider(),
+                        if (item["tenca"] != null)
+                          Row(
+                            children: const [
+                              Icon(Icons.info_outline),
+                              SizedBox(width: 5),
+                              Text(
+                                "Thông tin ca",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                        if (item["tenca"] != null) const SizedBox(height: 10),
+                        if (item["tenca"] != null)
+                          Align(
+                              alignment: Alignment.centerLeft,
+                              child: Card(
+                                color: HexColor(item["maunen"] ?? "#ffffff"),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Column(
+                                    children: [
+                                      Text(item["tenca"] ?? "",
+                                          style: TextStyle(
+                                              color: HexColor(
+                                                  item["mauchu"] ?? "#000000"),
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.bold)),
+                                      const SizedBox(height: 5),
+                                      if (item["batdau"] != null &&
+                                          item["batdau"].toString().length > 5)
+                                        Text(
+                                            "${item["batdau"].toString().substring(0, 5)} - ${item["ketthuc"].toString().substring(0, 5)}",
+                                            style: TextStyle(
+                                                color: HexColor(
+                                                    item["mauchu"] ??
+                                                        "#000000"),
+                                                fontSize: 11),
+                                            textAlign: TextAlign.center)
+                                    ],
+                                  ),
+                                ),
+                              )),
+                        if (item["tendiadiem"] != null &&
+                            item["tendiadiem"] != "")
+                          ListTile(
+                            leading: item["qrcode"] == true
+                                ? const Icon(Icons.qr_code_2_outlined,
+                                    color: Colors.blue)
+                                : const Icon(
+                                    Feather.map_pin,
+                                    color: Colors.red,
+                                  ),
+                            title: Text(item["tendiadiem"] ?? "",
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold)),
+                            subtitle: Text(
+                              "${item["diachi"] ?? ""}",
+                            ),
+                          )
                       ],
                     ),
                   ))

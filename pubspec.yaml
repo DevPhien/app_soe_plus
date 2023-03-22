@@ -140,7 +140,6 @@ dependencies:
   #background_location: ^0.8.1
   #geocoding: ^2.0.5
   wifi_info_flutter: any
-  webview_flutter_platform_interface: ^1.9.5
 dependency_overrides:
   intl: any
   rxdart: any

@@ -13,6 +13,7 @@ import '../../utils/golbal/golbal.dart';
 // import '../chat/comp/phonebook/phonebookhome.dart';
 import '../login/login.dart';
 import '../notify/notify.dart';
+import '../notify/notifycontroller.dart';
 import '../user/user.dart';
 import 'comp/appbarhome.dart';
 import 'comp/comhome.dart';
@@ -104,6 +105,8 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
         try {
           var obj = json.decode(message.data["hub"]);
           homecontroller.goNotification(obj["Data"]);
+          homecontroller.initData();
+          Get.put(NotyController()).initNoty(false);
         } catch (e) {}
       }
     });
@@ -112,7 +115,8 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
       if (notification != null && android != null && !kIsWeb) {}
-      print("onMessage");
+      homecontroller.initData();
+      Get.put(NotyController()).initNoty(false);
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
@@ -122,6 +126,8 @@ class HomeState extends State<Home> with WidgetsBindingObserver {
       try {
         var obj = json.decode(message.data["hub"]);
         homecontroller.goNotification(obj["Data"]);
+        homecontroller.initData();
+        Get.put(NotyController()).initNoty(false);
       } catch (e) {}
     });
   }

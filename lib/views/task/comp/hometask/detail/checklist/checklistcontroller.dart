@@ -102,8 +102,6 @@ class CheckListTaskController extends GetxController {
       if (idxt != -1) {
         checklists[idx]["tasks"][idxt]["IsCheck"] = v;
         checklists.refresh();
-        model.value = checklists[idx]["tasks"][idxt];
-        addTodo();
       }
     }
   }

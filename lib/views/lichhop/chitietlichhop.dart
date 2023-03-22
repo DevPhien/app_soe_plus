@@ -325,6 +325,20 @@ class ChitietLichhop extends StatelessWidget {
                 ),
               )
             ]),
+          //
+          if (controller.lichhop["Thamdu"] != null) breakRow,
+          if (controller.lichhop["Thamdu"] != null)
+            Wrap(children: [
+              const Icon(
+                Feather.user,
+                size: 14,
+              ),
+              const SizedBox(width: 5.0),
+              Text(
+                "Người được mời: ${controller.lichhop["Thamdu"] ?? ""}",
+                style: label,
+              ),
+            ]),
         ]));
   }
 

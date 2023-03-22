@@ -54,14 +54,16 @@ class Danhsachxe extends StatelessWidget {
                     mainAxisSize: MainAxisSize.max,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      if (item["Anhdaidien"] != "")
+                      if (item["Anhdaidien"] != null &&
+                          item["Anhdaidien"] != "")
                         Padding(
                           padding:
                               const EdgeInsetsDirectional.fromSTEB(0, 0, 10, 0),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(10),
                             child: Image.network(
-                              Golbal.congty!.fileurl + item["Anhdaidien"],
+                              Golbal.congty!.fileurl +
+                                  (item["Anhdaidien"] ?? ""),
                               width: 100,
                               fit: BoxFit.contain,
                             ),

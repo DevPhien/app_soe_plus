@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:geocoder2/geocoder2.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart' as dioform;
+import 'package:geocoder2/geocoder2.dart';
 import '../../../../utils/golbal/golbal.dart';
 
 class DiadiemlamController extends GetxController {

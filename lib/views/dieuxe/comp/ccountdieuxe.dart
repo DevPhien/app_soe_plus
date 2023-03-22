@@ -1,4 +1,4 @@
-import 'package:badges/badges.dart' as badges;
+import 'package:badges/badges.dart' as bd;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -22,7 +22,7 @@ class CCountDieuxe extends StatelessWidget {
           Expanded(
             child: Padding(
               padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 10, 0),
-              child: badges.Badge(
+              child: bd.Badge(
                 badgeContent: Obx(() => Text(
                       "${controller.countdata["totalPhieu"] ?? 0}",
                       textAlign: TextAlign.start,
@@ -31,16 +31,17 @@ class CCountDieuxe extends StatelessWidget {
                           ),
                     )),
                 showBadge: true,
-                badgeAnimation: const badges.BadgeAnimation.scale(
-                  toAnimate: true,
-                ),
-                badgeStyle: badges.BadgeStyle(
-                  shape: badges.BadgeShape.circle,
+                badgeStyle: bd.BadgeStyle(
+                  shape: bd.BadgeShape.circle,
                   badgeColor: FlutterFlowTheme.of(context).tertiaryColor,
                   elevation: 0,
                   padding: const EdgeInsetsDirectional.fromSTEB(8, 8, 8, 8),
                 ),
-                position: badges.BadgePosition.topEnd(),
+                position: bd.BadgePosition.topEnd(),
+                badgeAnimation: const bd.BadgeAnimation.rotation(
+                  curve: Curves.fastOutSlowIn,
+                  toAnimate: true,
+                ),
                 child: Obx(() => FFButtonWidget(
                       onPressed: () {
                         controller.toogleDieuxe(true);
@@ -76,7 +77,7 @@ class CCountDieuxe extends StatelessWidget {
           Expanded(
             child: Padding(
               padding: const EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
-              child: badges.Badge(
+              child: bd.Badge(
                 badgeContent: Obx(
                   () => Text("${controller.countdata["totalLenh"] ?? 0}",
                       textAlign: TextAlign.start,
@@ -85,16 +86,17 @@ class CCountDieuxe extends StatelessWidget {
                           )),
                 ),
                 showBadge: true,
-                badgeAnimation: const badges.BadgeAnimation.scale(
-                  toAnimate: true,
-                ),
-                badgeStyle: badges.BadgeStyle(
-                  shape: badges.BadgeShape.circle,
+                badgeStyle: bd.BadgeStyle(
+                  shape: bd.BadgeShape.circle,
                   badgeColor: FlutterFlowTheme.of(context).tertiaryColor,
                   elevation: 0,
                   padding: const EdgeInsetsDirectional.fromSTEB(8, 8, 8, 8),
                 ),
-                position: badges.BadgePosition.topEnd(),
+                position: bd.BadgePosition.topEnd(),
+                badgeAnimation: const bd.BadgeAnimation.rotation(
+                  curve: Curves.fastOutSlowIn,
+                  toAnimate: true,
+                ),
                 child: Obx(
                   () => FFButtonWidget(
                       onPressed: () {

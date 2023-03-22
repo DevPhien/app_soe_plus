@@ -275,14 +275,16 @@ class InputDataType extends StatelessWidget {
                   "checkbox${input["FormD_ID"]}", input["IsGiatri"]);
             },
             title: Text(
-              "${input["TenTruong"]}",
+              input["TenTruong"] ?? '',
               style: Golbal.styleinput,
             ),
             leading: Checkbox(
                 tristate: false,
                 activeColor: const Color(0xFF6dd230),
                 value:
-                    controller.request["checkbox${input["FormD_ID"]}"] ?? false,
+                    controller.request["checkbox${input["FormD_ID"]}"] == "true"
+                        ? true
+                        : false,
                 onChanged: (val) {
                   controller.setValue("checkbox${input["FormD_ID"]}", val);
                 }),
@@ -640,7 +642,9 @@ class InputDataType extends StatelessWidget {
                 tristate: false,
                 activeColor: const Color(0xFF6dd230),
                 value:
-                    controller.request["checkbox${input["FormD_ID"]}"] ?? false,
+                    controller.request["checkbox${input["FormD_ID"]}"] == "true"
+                        ? true
+                        : false,
                 onChanged: (val) {}),
           ),
         );

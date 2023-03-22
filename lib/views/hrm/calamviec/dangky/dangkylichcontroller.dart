@@ -183,6 +183,19 @@ class DangkylichController extends GetxController {
     dtngays.refresh();
   }
 
+  var thongtinca = {};
+  void openca() {
+    thongtinca = {};
+    dtngays
+        .where(
+            (p0) => p0.indexWhere((element) => element["chon"] == true) != -1)
+        .forEach((element) {
+      element.where((e) => e["chon"] == true).forEach((it) {
+        thongtinca = it;
+      });
+    });
+  }
+
   Future<void> initTudien() async {
     dioform.FormData formData = dioform.FormData.fromMap({
       "proc": "App_Dangkylamviec_Tudien",

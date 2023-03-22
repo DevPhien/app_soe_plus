@@ -10,6 +10,7 @@ import 'package:holding_gesture/holding_gesture.dart';
 import 'package:soe/utils/golbal/golbal.dart';
 import 'package:uuid/uuid.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
 class WebViewMobile extends StatefulWidget {
   final String url;
@@ -24,8 +25,6 @@ class WebViewMobile extends StatefulWidget {
 }
 
 class WebViewState extends State<WebViewMobile> {
-  final Completer<WebViewController> _controller =
-      Completer<WebViewController>();
   late WebViewController webcontroller;
   var imagearrPos = [];
   var imagePos = {};
@@ -54,6 +53,50 @@ class WebViewState extends State<WebViewMobile> {
     initPlatformState();
   }
 
+  void initWebController() {
+    // #docregion platform_features
+    late final PlatformWebViewControllerCreationParams params;
+    if (WebViewPlatform.instance is WebKitWebViewPlatform) {
+      params = WebKitWebViewControllerCreationParams(
+        allowsInlineMediaPlayback: true,
+        mediaTypesRequiringUserAction: const <PlaybackMediaTypes>{},
+      );
+    } else {
+      params = const PlatformWebViewControllerCreationParams();
+    }
+
+    final WebViewController controller =
+        WebViewController.fromPlatformCreationParams(params);
+    controller
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setBackgroundColor(const Color(0x00000000))
+      ..addJavaScriptChannel('imagePos',
+          onMessageReceived: (JavaScriptMessage message) {
+        if (kDebugMode) {
+          print(message.message);
+        }
+        var data = json.decode(message.message);
+        for (var k in data.keys) {
+          imagePos[k] = data[k];
+        }
+        setValuePos(data);
+        setState(() {
+          if (data["event"] == "click") {
+            showDelete = !showDelete;
+          }
+        });
+      })
+      ..addJavaScriptChannel('initimagePos',
+          onMessageReceived: (JavaScriptMessage message) {
+        if (kDebugMode) {
+          print(message.message);
+        }
+        if (message.message == "-1") initImagePost();
+      })
+      ..loadRequest(Uri.parse(Uri.encodeFull(widget.url)));
+    webcontroller = controller;
+  }
+
   void closeOrient() {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -75,40 +118,9 @@ class WebViewState extends State<WebViewMobile> {
     var idx = imagearrPos.indexWhere((element) => element["id"] == data["id"]);
     if (idx != -1) {
       imagearrPos[idx] = imagePos;
-      await webcontroller.runJavascript(
+      await webcontroller.runJavaScript(
           'initImageArray("${widget.chuky}",\'${json.encode(imagearrPos)}\')');
     }
-  }
-
-  JavascriptChannel _imagePosJavascriptChannel(BuildContext context) {
-    return JavascriptChannel(
-        name: 'imagePos',
-        onMessageReceived: (JavascriptMessage message) {
-          if (kDebugMode) {
-            print(message.message);
-          }
-          var data = json.decode(message.message);
-          for (var k in data.keys) {
-            imagePos[k] = data[k];
-          }
-          setValuePos(data);
-          setState(() {
-            if (data["event"] == "click") {
-              showDelete = !showDelete;
-            }
-          });
-        });
-  }
-
-  JavascriptChannel _initPosJavascriptChannel(BuildContext context) {
-    return JavascriptChannel(
-        name: 'initimagePos',
-        onMessageReceived: (JavascriptMessage message) {
-          if (kDebugMode) {
-            print(message.message);
-          }
-          if (message.message == "-1") initImagePost();
-        });
   }
 
   var uuid = const Uuid();
@@ -126,7 +138,7 @@ class WebViewState extends State<WebViewMobile> {
     imagePos = obj;
     imagearrPos.add(obj);
     await webcontroller
-        .runJavascript('initImage("${widget.chuky}",0,120,"${obj["id"]}");');
+        .runJavaScript('initImage("${widget.chuky}",0,120,"${obj["id"]}");');
   }
 
   Future<void> delChuky() async {
@@ -170,21 +182,21 @@ class WebViewState extends State<WebViewMobile> {
       setState(() {
         showDelete = false;
       });
-      await webcontroller.runJavascript('delImage()');
+      await webcontroller.runJavaScript('delImage()');
     }
   }
 
   Future<void> updateChuky(double value) async {
-    await webcontroller.runJavascript('resetImage(${value * 3});');
+    await webcontroller.runJavaScript('resetImage(${value * 3});');
   }
 
   Future<void> updateChukyRotation(double value) async {
-    await webcontroller.runJavascript('resetImageRotation($value);');
+    await webcontroller.runJavaScript('resetImageRotation($value);');
   }
 
   Future<void> updateChukyPos() async {
     await webcontroller
-        .runJavascript('resetImagePos(${imagePos["x"]},${imagePos["y"]});');
+        .runJavaScript('resetImagePos(${imagePos["x"]},${imagePos["y"]});');
   }
 
   Widget joystick() {
@@ -246,7 +258,7 @@ class WebViewState extends State<WebViewMobile> {
       imagePos = List.castFrom(widget.imagePos).last;
       if (imagePos["id"] == null) imagePos["id"] = uuid.v4();
       for (var element in imagearrPos) {
-        webcontroller.runJavascript(
+        webcontroller.runJavaScript(
             'initImagePost("${widget.chuky}",\'${json.encode(element)}\');');
       }
     }
@@ -355,17 +367,18 @@ class WebViewState extends State<WebViewMobile> {
               Expanded(
                 child: Stack(
                   children: [
-                    WebView(
-                      initialUrl: Uri.encodeFull(widget.url),
-                      javascriptMode: JavascriptMode.unrestricted,
-                      javascriptChannels: <JavascriptChannel>{
-                        _imagePosJavascriptChannel(context),
-                        _initPosJavascriptChannel(context)
-                      },
-                      onWebViewCreated: (WebViewController controller) {
-                        _controller.complete(controller);
-                        webcontroller = controller;
-                      },
+                    WebViewWidget(
+                      controller: webcontroller,
+                      // initialUrl: Uri.encodeFull(widget.url),
+                      // javascriptMode: JavascriptMode.unrestricted,
+                      // javascriptChannels: <JavascriptChannel>{
+                      //   _imagePosJavascriptChannel(context),
+                      //   _initPosJavascriptChannel(context)
+                      // },
+                      // onWebViewCreated: (WebViewController controller) {
+                      //   _controller.complete(controller);
+                      //   webcontroller = controller;
+                      // },
                     ),
                     if (showPad)
                       Positioned(
