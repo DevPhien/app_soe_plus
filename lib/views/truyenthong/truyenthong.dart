@@ -73,7 +73,8 @@ class Truyenthong extends StatelessWidget {
                     icon: controller.isActive.value
                         ? const Icon(AntDesign.notification)
                         : const Icon(FontAwesome.newspaper_o),
-                    label: "Thông báo"),
+                    label:
+                        controller.isActive.value ? "Thông báo" : "Thông tin"),
                 if (!controller.isLoadding.value &&
                     controller.isActive.value) ...[
                   const BottomNavigationBarItem(
