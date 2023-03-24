@@ -281,10 +281,12 @@ class InputDataType extends StatelessWidget {
             leading: Checkbox(
                 tristate: false,
                 activeColor: const Color(0xFF6dd230),
-                value:
-                    controller.request["checkbox${input["FormD_ID"]}"] == "true"
-                        ? true
-                        : false,
+                value: (controller.request["checkbox${input["FormD_ID"]}"] ==
+                            "true" ||
+                        controller.request["checkbox${input["FormD_ID"]}"] ==
+                            true)
+                    ? true
+                    : false,
                 onChanged: (val) {
                   controller.setValue("checkbox${input["FormD_ID"]}", val);
                 }),
@@ -641,10 +643,12 @@ class InputDataType extends StatelessWidget {
             leading: Checkbox(
                 tristate: false,
                 activeColor: const Color(0xFF6dd230),
-                value:
-                    controller.request["checkbox${input["FormD_ID"]}"] == "true"
-                        ? true
-                        : false,
+                value: (controller.request["checkbox${input["FormD_ID"]}"] ==
+                            "true" ||
+                        controller.request["checkbox${input["FormD_ID"]}"] ==
+                            true)
+                    ? true
+                    : false,
                 onChanged: (val) {}),
           ),
         );

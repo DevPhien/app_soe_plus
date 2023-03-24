@@ -163,6 +163,7 @@ class ChamCongQRController extends GetxController {
     try {
       var par = {
         "user_id": Golbal.store.user["user_id"],
+        "year": year.value,
       };
       var strpar = json.encode(par);
       dioform.FormData formData =
