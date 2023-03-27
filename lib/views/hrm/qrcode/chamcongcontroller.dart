@@ -112,7 +112,7 @@ class ChamCongQRController extends GetxController {
               MaterialPageRoute(
                 builder: (context) => QRCode(
                   checkin: checkin,
-                  isInout: false,
+                  isInout: (checkin["IsCheckin"] || true),
                   face: face,
                 ),
               ));
