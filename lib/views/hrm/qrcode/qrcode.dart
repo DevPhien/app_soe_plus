@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
 import 'package:path_provider/path_provider.dart';
@@ -17,14 +18,14 @@ import '../../../utils/golbal/golbal.dart';
 import 'QRcodeView2.dart';
 
 class QRCode extends StatefulWidget {
-  final dynamic checkin;
-  final bool isInout;
-  final String? face;
+  // final dynamic checkin;
+  // final bool isInout;
+  // final String? face;
   const QRCode({
     Key? key,
-    this.checkin,
-    this.face,
-    required this.isInout,
+    // this.checkin,
+    // this.face,
+    // required this.isInout,
   }) : super(key: key);
 
   @override
@@ -32,6 +33,8 @@ class QRCode extends StatefulWidget {
 }
 
 class _QRViewExampleState extends State<QRCode> {
+  var argument = {}.obs;
+
   //final Location location = Location();
   var qrText = '';
   bool flashState = true;
@@ -50,6 +53,7 @@ class _QRViewExampleState extends State<QRCode> {
   @override
   void initState() {
     super.initState();
+    argument.value = Get.arguments;
     initFace();
     bindListQrcode();
   }
@@ -73,11 +77,11 @@ class _QRViewExampleState extends State<QRCode> {
   }
 
   bindListQrcode() async {
-    if (widget.checkin != null) {
-      qrcode = widget.checkin["Qrcode"];
-      defeaultcode = widget.checkin["QRcodeDefault"];
-      checkinID = widget.checkin["Checkin_ID"];
-      isType = widget.checkin["CIsType"];
+    if (argument["checkin"] != null) {
+      qrcode = argument["checkin"]["Qrcode"];
+      defeaultcode = argument["checkin"]["QRcodeDefault"];
+      checkinID = argument["checkin"]["Checkin_ID"];
+      isType = argument["checkin"]["CIsType"];
       filename = Golbal.store.user["user_id"] +
           "_" +
           "${DateTime.now().hour}_${DateTime.now().minute}" +
@@ -117,7 +121,7 @@ class _QRViewExampleState extends State<QRCode> {
 
   Future<String?> saveFaceImage() async {
     String path =
-        "/Portals/${Golbal.store.user["organization_id"]}/SHRM/Checkin/${DateFormat("dMy").format(widget.checkin["Date"])}/";
+        "/Portals/${Golbal.store.user["organization_id"]}/SHRM/Checkin/${DateFormat("dMy").format(argument["checkin"]["Date"])}/";
     var mdata = {
       // "key": "t",
       // "FileNames": "$filename,Thumb_$filename",
@@ -206,7 +210,7 @@ class _QRViewExampleState extends State<QRCode> {
     EasyLoading.showToast(tyle.toString());
     //So sánh khuôn mặt
     EasyLoading.show(
-        status: "Đang check ${inout ? " in" : " out"}...", dismissOnTap: true);
+        status: "Đang check ${inout ? "in" : "out"}...", dismissOnTap: true);
     Location location = Location();
     bool serviceEnabled;
     PermissionStatus permissionGranted;
@@ -278,9 +282,11 @@ class _QRViewExampleState extends State<QRCode> {
         data: formData);
     EasyLoading.dismiss();
     if (res.data != null && res.data["error"] != 1) {
-      EasyLoading.showSuccess("Check in thành công!.");
+      EasyLoading.showSuccess(
+          inout ? "Check in thành công!." : "Check out thành công!.");
       // ignore: use_build_context_synchronously
-      Navigator.of(context).pop();
+      //Navigator.of(context).pop();
+      Get.back(result: true);
     } else {
       _showMaterialDialog(res.data["ms"]);
     }
@@ -292,9 +298,9 @@ class _QRViewExampleState extends State<QRCode> {
         context,
         MaterialPageRoute(
           builder: (context) => QRCodeView2(
-            checkin: widget.checkin,
-            isInout: widget.isInout,
-            face: widget.face,
+            checkin: argument["checkin"],
+            isInout: argument["isInout"],
+            face: argument["face"],
             key: null,
           ),
         ));
@@ -314,7 +320,7 @@ class _QRViewExampleState extends State<QRCode> {
         elevation: 0.0,
         titleSpacing: 0.0,
         iconTheme: IconThemeData(color: Golbal.iconColor),
-        title: Text(widget.isInout == false ? "Check Out" : "Check in",
+        title: Text(argument["isInout"] == false ? "Check Out" : "Check in",
             style: TextStyle(
                 color: Golbal.titleappColor, fontWeight: FontWeight.bold)),
         centerTitle: true,
@@ -350,7 +356,7 @@ class _QRViewExampleState extends State<QRCode> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          if (widget.isInout)
+                          if (argument["isInout"])
                             Expanded(
                                 child: ElevatedButton(
                                     onPressed: () {
@@ -362,7 +368,7 @@ class _QRViewExampleState extends State<QRCode> {
                                       "Checkin",
                                       style: TextStyle(color: Colors.white),
                                     ))),
-                          if (!widget.isInout)
+                          if (!argument["isInout"])
                             Expanded(
                                 child: ElevatedButton(
                                     onPressed: () {

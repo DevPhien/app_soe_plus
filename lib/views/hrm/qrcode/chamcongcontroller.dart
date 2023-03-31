@@ -107,17 +107,25 @@ class ChamCongQRController extends GetxController {
             choiceCamera();
           }
         } else {
-          await Navigator.push(
-              Get.context!,
-              MaterialPageRoute(
-                builder: (context) => QRCode(
-                  checkin: checkin,
-                  isInout: (checkin["IsCheckin"] || true),
-                  face: face,
-                ),
-              ));
+          // await Navigator.push(
+          //     Get.context!,
+          //     MaterialPageRoute(
+          //       builder: (context) => QRCode(
+          //         checkin: checkin,
+          //         isInout: (checkin["IsCheckin"] || true),
+          //         face: face,
+          //       ),
+          //     ));
           //await Get.toNamed("qrcode", arguments: checkin);
-          listTBS();
+
+          var rs = await Get.toNamed("qrcode", arguments: {
+            "checkin": checkin,
+            "isInout": (checkin["IsCheckin"] || true),
+            "face": face
+          });
+          if (rs == true) {
+            listTBS();
+          }
         }
       }
     } else {

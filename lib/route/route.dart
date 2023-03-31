@@ -35,6 +35,7 @@ import '../views/hrm/myprofile/myprofile.dart';
 import '../views/hrm/phieuluong/phieuluong.dart';
 import '../views/hrm/qrcode/chamcong.dart';
 import '../views/hrm/qrcode/checkin.dart';
+import '../views/hrm/qrcode/qrcode.dart';
 import '../views/lichhop/chitietlichhop.dart';
 import '../views/lichhop/comp/adlich.dart';
 import '../views/lichhop/comp/lichfilter.dart';
@@ -162,6 +163,7 @@ class RouterGet {
     GetPage(name: '/myprofile', page: () => Myprofile()),
     GetPage(name: '/chamcongQR', page: () => ChamCongQRPage()),
     GetPage(name: '/checkin', page: () => Checkin()),
+    GetPage(name: '/qrcode', page: () => const QRCode()),
     GetPage(name: '/hrm', page: () => HRMPage()),
     GetPage(name: '/dkcalamviec', page: () => DangkylichPage()),
     GetPage(name: '/calam', page: () => CalamPage()),

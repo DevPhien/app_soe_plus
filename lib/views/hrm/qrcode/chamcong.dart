@@ -602,9 +602,11 @@ class ChamCongQRPage extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 20),
-                    controller.selectedEvents.isNotEmpty
-                        ? _buildEventList()
-                        : _buildEventNull(),
+                    Obx(
+                      () => controller.selectedEvents.isNotEmpty
+                          ? _buildEventList()
+                          : _buildEventNull(),
+                    ),
                   ],
                 ),
               ),
